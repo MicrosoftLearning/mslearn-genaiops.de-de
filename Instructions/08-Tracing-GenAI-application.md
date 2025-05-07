@@ -34,12 +34,9 @@ Um einen Hub und ein Projekt schnell einzurichten, finden Sie unten einfache Anw
     1. Geben Sie einen **Projektnamen** ein.
     1. Wenn Sie dazu aufgefordert werden, **erstellen Sie einen neuen Hub**.
     1. Anpassen des Hubs:
-
         1. Wählen Sie **Abonnement**, **Ressourcengruppe**, **Speicherort** usw. aus.
         1. Verbinden Sie eine **neue Azure KI Services-Ressource** (KI-Suche überspringen).
-
     1. Überprüfen Sie die Angaben, und wählen Sie **Erstellen** aus.
-
 1. **Warten Sie, bis die Bereitstellung abgeschlossen ist** (~ 1–2 Minuten).
 
 ### B. Bereitstellen eines Modells
