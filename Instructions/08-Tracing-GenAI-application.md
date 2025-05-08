@@ -1,9 +1,9 @@
 ---
 lab:
-  title: Überwachen der Anwendung für generative KI
+  title: Analysieren und Debuggen Ihrer generativen KI-App mit Ablaufverfolgung
 ---
 
-# Überwachen der Anwendung für generative KI
+# Analysieren und Debuggen Ihrer generativen KI-App mit Ablaufverfolgung
 
 Diese Übung dauert ca. **30** Minuten.
 
@@ -11,9 +11,11 @@ Diese Übung dauert ca. **30** Minuten.
 
 ## Einführung
 
-In dieser Übung aktivieren Sie die Überwachung für eine App zum Abschließen von Chats und zeigen deren Leistung in Azure Monitor an. Sie interagieren mit Ihrem bereitgestellten Modell, um Daten zu generieren, die generierten Daten über das Dashboard „Einblicke für generative KI-Anwendungen“ anzuzeigen und Warnmeldungen einzurichten, um die Bereitstellung des Modells zu optimieren.
+In dieser Übung führen Sie einen mehrstufigen generativen KI-Assistenten aus, der Wandertouren empfiehlt und Outdoor-Ausrüstung vorschlägt. Sie werden die Tracing-Funktionen des Azure KI Inference SDK nutzen, um zu analysieren, wie Ihre Anwendung ausgeführt wird, und um wichtige Entscheidungspunkte zu identifizieren, die vom Modell und der umgebenden Logik getroffen werden.
 
-## 1. Einrichten der Umgebung
+Sie werden mit einem bereitgestellten Modell interagieren, um eine echte User Journey zu simulieren, jede Phase der Anwendung von der Benutzereingabe über die Modellreaktion bis hin zur Nachbearbeitung verfolgen und die Ablaufverfolgungsdaten in Azure AI Foundry anzeigen. Dies wird Ihnen helfen zu verstehen, wie Ablaufverfolgung den Einblick verbessert, das Debuggen vereinfacht und die Leistungsoptimierung von generativen KI-Anwendungen unterstützt.
+
+## Einrichten der Umgebung
 
 Um diese Übung abzuschließen benötigen Sie Folgendes:
 
@@ -22,7 +24,7 @@ Um diese Übung abzuschließen benötigen Sie Folgendes:
 - Ein bereitgestelltes Modell (z. B. GPT-4o),
 - Eine verbundene Application Insights-Ressource.
 
-### A. Erstellen eines Azure KI Foundry-Hubs und -Projekts
+### Erstellen eines Azure KI Foundry-Hubs und -Projekts
 
 Um einen Hub und ein Projekt schnell einzurichten, finden Sie unten einfache Anweisungen zur Verwendung der Benutzeroberfläche des Azure KI Foundry-Portals.
 
@@ -39,7 +41,7 @@ Um einen Hub und ein Projekt schnell einzurichten, finden Sie unten einfache Anw
     1. Überprüfen Sie die Angaben, und wählen Sie **Erstellen** aus.
 1. **Warten Sie, bis die Bereitstellung abgeschlossen ist** (~ 1–2 Minuten).
 
-### B. Bereitstellen eines Modells
+### Bereitstellen eines Modells
 
 Um Daten zu generieren, die Sie überwachen können, müssen Sie zuerst ein Modell bereitstellen und damit interagieren. In den Anweisungen werden Sie aufgefordert, ein GPT-4o-Modell bereitzustellen, jedoch **können Sie jedes Modell** aus der Azure OpenAI Service-Sammlung verwenden, das Ihnen zur Verfügung steht.
 
@@ -50,9 +52,9 @@ Um Daten zu generieren, die Sie überwachen können, müssen Sie zuerst ein Mode
 
 Der Hub und das Projekt sind bereit, wobei alle erforderlichen Azure-Ressourcen automatisch bereitgestellt werden.
 
-### C. Verbinden von Application Insights
+### Verbinden von Application Insights
 
-Verbinden Sie Application Insights mit Ihrem Projekt in Azure KI Foundry, um gesammelte Daten für die Überwachung zu starten.
+Verbinden Sie Application Insights mit Ihrem Projekt in Azure KI Foundry, um gesammelte Daten für die Analyse zu starten.
 
 1. Öffnen Sie Ihr Projekt im Azure KI Foundry-Portal.
 1. Verwenden Sie das Menü auf der linken Seite, und wählen Sie die Seite **Ablaufverfolgung** aus.
@@ -61,13 +63,13 @@ Verbinden Sie Application Insights mit Ihrem Projekt in Azure KI Foundry, um ges
 
 Application Insights ist jetzt mit Ihrem Projekt verbunden, und die Daten werden für die Analyse erfasst.
 
-## 2. Interagieren mit einem bereitgestellten Modell
+## Ausführen einer generativen KI-App mit der Cloud Shell
 
-Sie interagieren programmgesteuert mit Ihrem bereitgestellten Modell, indem Sie eine Verbindung mit Ihrem Azure KI Foundry-Projekt mithilfe von Azure Cloud Shell einrichten. Auf diese Weise können Sie eine Eingabeaufforderung an das Modell senden und Überwachungsdaten generieren.
+Sie stellen eine Verbindung zu Ihrem Azure AI Foundry-Projekt über Azure Cloud Shell her und interagieren programmatisch mit einem bereitgestellten Modell als Teil einer generativen KI-Anwendung.
 
-### A. Herstellen einer Verbindung mit einem Modell über die Cloud Shell
+### Interagieren mit einem bereitgestellten Modell
 
-Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die Interaktion mit Ihrem Modell authentifiziert werden sollen. Anschließend greifen Sie auf die Azure Cloud Shell zu und aktualisieren die Konfiguration, um die bereitgestellten Eingabeaufforderungen an Ihr eigenes bereitgestelltes Modell zu senden.
+Beginnen Sie mit dem Abrufen der notwendigen Informationen, um sich für die Interaktion mit Ihrem bereitgestellten Modell zu authentifizieren. Anschließend greifen Sie auf die Azure Cloud Shell zu und aktualisieren den Code Ihrer generativen KI-App.
 
 1. Wechseln Sie im Azure AI Foundry-Portal zur **Übersichtsseite** Ihres Projekts.
 1. Beachten Sie im Bereich **Projektdetails** die **Projektverbindungszeichenfolge**.
@@ -82,7 +84,7 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
 1. Geben Sie im Cloud Shell-Bereich die folgenden Befehle ein und führen Sie sie aus:
 
     ```
-    rm -r mslearn-ai-foundry -f
+    rm -r mslearn-genaiops -f
     git clone https://github.com/microsoftlearning/mslearn-genaiops mslearn-genaiops
     ```
 
@@ -91,7 +93,7 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
 1. Navigieren Sie nach dem Klonen des Repositorys zu dem Ordner, der die Codedateien der Anwendung enthält:  
 
     ```
-   cd mslearn-ai-foundry/Files/07
+   cd mslearn-genaiops/Files/08
     ```
 
 1. Geben Sie im Befehlszeilenfenster der Cloud Shell den folgenden Befehl ein, um die zu verwendenden Bibliotheken zu installieren:
@@ -117,132 +119,257 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
 
 1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S** oder **Rechtsklick > Speichern**, um **Ihre Änderungen zu speichern**.
 
-### B. Senden von Eingabeaufforderungen an Ihr bereitgestelltes Modell
+### Aktualisieren des Codes für Ihre generative KI-App
 
-Sie führen nun mehrere Skripts aus, die verschiedene Eingabeaufforderungen an Ihr bereitgestelltes Modell senden. Diese Interaktionen generieren Daten, die Sie später in Azure Monitor beobachten können.
+Nun, da Ihre Umgebung eingerichtet und Ihre .env-Datei konfiguriert ist, ist es an der Zeit, Ihr KI-Assistentenskript für die Ausführung vorzubereiten. Neben der Verbindung mit einem KI-Projekt und der Aktivierung von Application Insights müssen Sie Folgendes ausführen:
 
-1. Führen Sie den folgenden Befehl aus, um **das erste Skript** anzuzeigen, das bereitgestellt wurde:
+- Interagieren Sie mit Ihrem bereitgestellten Modell.
+- Definieren Sie die Funktion, um Ihre Eingabeaufforderung anzugeben.
+- Definieren Sie den Hauptfluss, der alle Funktionen aufruft.
+
+Sie fügen diese drei Teile zu einem Startskript hinzu.
+
+1. Führen Sie den folgenden Befehl aus, um **das bereitgestellte Skript zu öffnen**:
 
     ```
    code start-prompt.py
     ```
 
+    Sie werden sehen, dass mehrere wichtige Zeilen leer gelassen oder mit leeren # Kommentaren versehen wurden. Ihre Aufgabe besteht darin, das Skript durch Kopieren und Einfügen der korrekten Zeilen an die entsprechenden Speicherorte abzuschließen.
+
+1. Suchen Sie im Skript die **# Funktion zum Aufrufen des Modells und zur Behandlung der Ablaufverfolgung**.
+1. Unter diesem Kommentar fügen Sie den folgenden Code ein:
+
+    ```
+   def call_model(system_prompt, user_prompt, span_name):
+        with tracer.start_as_current_span(span_name) as span:
+            span.set_attribute("session.id", SESSION_ID)
+            span.set_attribute("prompt.user", user_prompt)
+            start_time = time.time()
+    
+            response = chat_client.complete(
+                model=model_name,
+                messages=[SystemMessage(system_prompt), UserMessage(user_prompt)]
+            )
+    
+            duration = time.time() - start_time
+            output = response.choices[0].message.content
+            span.set_attribute("response.time", duration)
+            span.set_attribute("response.tokens", len(output.split()))
+            return output
+    ```
+
+1. Suchen Sie im Skript die **# Funktion zur Empfehlung einer Wanderung auf der Grundlage von Benutzerpräferenzen**.
+1. Unter diesem Kommentar fügen Sie den folgenden Code ein:
+
+    ```
+   def recommend_hike(preferences):
+        with tracer.start_as_current_span("recommend_hike") as span:
+            prompt = f"""
+            Recommend a named hiking trail based on the following user preferences.
+            Provide only the name of the trail and a one-sentence summary.
+            Preferences: {preferences}
+            """
+            response = call_model(
+                "You are an expert hiking trail recommender.",
+                prompt,
+                "recommend_model_call"
+            )
+            span.set_attribute("hike_recommendation", response.strip())
+            return response.strip()
+    ```
+
+1. Suchen Sie in dem Skript nach **# ---- Main Flow ----**.
+1. Unter diesem Kommentar fügen Sie den folgenden Code ein:
+
+    ```
+   if __name__ == "__main__":
+       with tracer.start_as_current_span("trail_guide_session") as session_span:
+           session_span.set_attribute("session.id", SESSION_ID)
+           print("\n--- Trail Guide AI Assistant ---")
+           preferences = input("Tell me what kind of hike you're looking for (location, difficulty, scenery):\n> ")
+
+           hike = recommend_hike(preferences)
+           print(f"\n✅ Recommended Hike: {hike}")
+
+           # Run profile function
+
+
+           # Run match product function
+
+
+           print(f"\n🔍 Trace ID available in Application Insights for session: {SESSION_ID}")
+    ```
+
+1. **Speichern Sie die Änderungen**, die Sie im Skript vorgenommen haben.
 1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, **um das Skript auszuführen**:
 
     ```
    python start-prompt.py
     ```
 
-    Das Modell generiert eine Antwort, die mit Application Insights für eine weitere Analyse erfasst wird. Lassen Sie uns unsere Eingabeaufforderungen variieren, um ihre Effekte zu untersuchen.
-
-1. **Öffnen und überprüfen Sie das Skript**, wo die Eingabeaufforderung anweist, **nur mit einem Satz und einer Liste zu antworten**:
+1. Geben Sie eine Beschreibung der Art der Wanderung, die Sie suchen, z. B.:
 
     ```
-   code short-prompt.py
+   A one-day hike in the mountains
     ```
 
-1. **Führen Sie das Skript aus** , indem Sie den folgenden Befehl in die Befehlszeile eingeben:
-
-    ```
-   python short-prompt.py
-    ```
-
-1. Das nächste Skript hat ein ähnliches Ziel, enthält aber die Anweisungen für die Ausgabe in der **Systemnachricht** anstelle der Benutzernachricht:
-
-    ```
-   code system-prompt.py
-    ```
-
-1. **Führen Sie das Skript aus** , indem Sie den folgenden Befehl in die Befehlszeile eingeben:
-
-    ```
-   python system-prompt.py
-    ```
-
-1. Abschließend versuchen wir, einen Fehler auszulösen, indem wir eine Eingabeaufforderung mit **zu viele Token** ausführen:
-
-    ```
-   code error-prompt.py
-    ```
-
-1. **Führen Sie das Skript aus**, indem Sie den folgenden Befehl in die Befehlszeile eingeben: Bitte beachten Sie, dass es **sehr wahrscheinlich zu einem Fehler kommt!**
-
-    ```
-   python error-prompt.py
-    ```
-
-Nachdem Sie nun mit dem Modell interagiert haben, können Sie die Daten in Azure Monitor überprüfen.
+    Das Modell erzeugt eine Antwort, die mit Application Insights erfasst wird. Sie können die Ablaufverfolgungen im **Azure AI Foundry-Portal** visualisieren.
 
 > **Hinweis**: Es kann einige Minuten dauern, bis Überwachungsdaten in Azure Monitor angezeigt werden.
 
-## 4. Überwachungsdaten in Azure Monitor anzeigen
+## Anzeigen Ihrer Ablaufverfolgungsdaten im Azure AI Foundry-Portal
 
-Um Daten anzuzeigen, die aus Ihren Modellinteraktionen gesammelt werden, greifen Sie auf das Dashboard zu, das mit einer Arbeitsmappe in Azure Monitor verknüpft ist.
+Nachdem Sie das Skript ausgeführt haben, haben Sie ein Protokoll der Ausführung Ihrer KI-Anwendung erstellt. Jetzt erkunden Sie es mithilfe von Application Insights in Azure AI Foundry.
 
-### A. Navigieren Sie im Azure KI-Foundry-Portal zu Azure Monitor.
+> **Hinweis:** Später führen Sie den Code erneut aus und zeigen die Ablaufverfolgungen erneut im Azure KI Foundry-Portal an. Sehen wir uns zunächst an, wo die Ablaufverfolgungen gefunden werden sollen, um sie zu visualisieren.
 
+### Navigieren Sie zum Azure AI Foundry-Portal
+
+1. **Lassen Sie Cloud Shell geöffnet!** Sie werden darauf zurückkommen, um den Code zu aktualisieren und ihn erneut auszuführen.
 1. Navigieren Sie in Ihrem Browser zu der Registerkarte, auf der das **Azure AI Foundry-Portal** geöffnet ist.
 1. Wählen Sie auf der linken Seite das Menü **Ablaufverfolgung** aus.
-1. Wählen Sie oben den Link „**Sehen Sie sich Ihr Dashboard mit Einblicken für generative KI-Anwendungen an**“ aus. Der Link öffnet Azure Monitor auf einer neuen Registerkarte.
-1. Überprüfen Sie die **Übersicht** mit zusammengefassten Daten zu den Interaktionen mit Ihrem bereitgestellten Modell.
+1. *Wenn* keine Daten angezeigt werden, **aktualisieren** Sie Ihre Ansicht.
+1. Wählen Sie die Ablaufverfolgung **train_guide_session** aus, um ein neues Fenster zu öffnen, in dem weitere Details angezeigt werden.
 
-## 5. Interpretieren von Überwachungsmetriken in Azure Monitor
+### Überprüfen Ihrer Ablaufverfolgung
 
-Nun ist es der Moment gekommen, sich mit den Daten auseinanderzusetzen und mit der Interpretation zu beginnen.
+Diese Ansicht zeigt die Ablaufverfolgung für eine vollständige Sitzung des Trail Guide AI-Assistenten.
 
-### A. Überprüfen der Tokenverwendung
+- **Übergeordnete Spanne**: trail_guide_session (die übergeordnete Spanne). Sie stellt die gesamte Ausführung Ihres Assistenten von Anfang bis Ende dar.
 
-Konzentrieren Sie sich zuerst auf den Abschnitt **Tokenverwendung** und überprüfen Sie die folgenden Metriken:
+- **Verschachtelte untergeordnete Spannen**: Jede eingerückte Linie stellt einen geschachtelten Vorgang dar. Sie finden Folgendes:
 
-- **Prompt-Tokens**: Die Gesamtzahl der Tokens, die in der Eingabe (die von Ihnen gesendeten Prompts) über alle Modellaufrufe hinweg verwendet wurden.
+    - **recommend_hike**: Erfasst Ihre Logik bei der Entscheidung einer Wanderung.
+    - **recommend_model_call**: Ist die von call_model() innerhalb von recommend_hike erstellte Spanne.
+    - **chat gpt-4o**: Dies wird automatisch vom Azure AI Inference SDK instrumentiert, um die tatsächliche LLM-Interaktion anzuzeigen.
 
-> Betrachten Sie dies als die *Kosten für das Stellen einer Frage* an das Modell.
+1. Sie können auf eine beliebige Spanne klicken, um Folgendes anzuzeigen:
 
-- **Abschlusstoken**: Die Anzahl der Token, die das Modell als Ausgabe zurückgegeben hat, im Wesentlichen die Länge der Antworten.
+    1. Die Dauer.
+    1. Die Attribute wie Benutzerprompt, verwendete Tokens, Antwortzeit.
+    1. Alle Fehler oder benutzerdefinierten Daten, die mit **span.set_attribute(...)** verbunden sind.
 
-> Die generierten Abschlusstoken stellen häufig den Großteil der Tokenverwendung und -kosten dar, insbesondere für lange oder ausführliche Antworten.
+## Hinzufügen weiterer Funktionen zum Code
 
-- **Gesamttoken**: Die kombinierten Gesamtaufforderungstoken und Abschlusstoken.
 
-> Wichtigste Metrik für Abrechnung und Leistung, da sie Latenz und Kosten steuert.
+1. Führen Sie den folgenden Befehl aus, um **das Skript erneut zu öffnen:**
 
-- **Gesamtaufrufe**: Die Anzahl der separaten Ableitungsanforderungen. Dies ist, wie oft das Modell aufgerufen wurde.
+    ```
+   code start-prompt.py
+    ```
 
-> Nützlich für die Analyse des Durchsatzes und verständnis der durchschnittlichen Kosten pro Anruf.
+1. Suchen Sie im Skript **# Function to generate a trip profile for the recommended hike**.
+1. Unter diesem Kommentar fügen Sie den folgenden Code ein:
 
-### B. Vergleichen der einzelnen Eingabeaufforderungen
+    ```
+   def generate_trip_profile(hike_name):
+       with tracer.start_as_current_span("trip_profile_generation") as span:
+           prompt = f"""
+           Hike: {hike_name}
+           Respond ONLY with a valid JSON object and nothing else.
+           Do not include any intro text, commentary, or markdown formatting.
+           Format: {{ "trailType": ..., "typicalWeather": ..., "recommendedGear": [ ... ] }}
+           """
+           response = call_model(
+               "You are an AI assistant that returns structured hiking trip data in JSON format.",
+               prompt,
+               "trip_profile_model_call"
+           )
+           print("🔍 Raw model response:", response)
+           try:
+               profile = json.loads(response)
+               span.set_attribute("profile.success", True)
+               return profile
+           except json.JSONDecodeError as e:
+               print("❌ JSON decode error:", e)
+               span.set_attribute("profile.success", False)
+               return {}
+    ```
 
-Scrollen Sie nach unten, um die **Gen KI Spans** zu finden, die als Tabelle dargestellt wird, in der jede Eingabeaufforderung als neue Datenzeile dargestellt wird. Überprüfen und vergleichen Sie den Inhalt der folgenden Spalten:
+1. Suchen Sie im Skript **# Function to match recommended gear with products in the catalog**.
+1. Unter diesem Kommentar fügen Sie den folgenden Code ein:
 
-- **Status**: Gibt an, ob ein Modellaufruf erfolgreich war oder fehlgeschlagen ist.
+    ```
+   def match_products(recommended_gear):
+       with tracer.start_as_current_span("product_matching") as span:
+           matched = []
+           for gear_item in recommended_gear:
+               for product in mock_product_catalog:
+                   if any(word in product.lower() for word in gear_item.lower().split()):
+                       matched.append(product)
+                       break
+           span.set_attribute("matched.count", len(matched))
+           return matched
+    ```
 
-> Verwenden Sie diese Option, um problematische Eingabeaufforderungen oder Konfigurationsfehler zu identifizieren. Die letzte Eingabeaufforderung ist wahrscheinlich fehlgeschlagen, weil die Eingabeaufforderung zu lang war.
+1. Suchen Sie im Skript **# Run profile function**.
+1. Fügen Sie unterhalb und **ausgerichtet mit** diesem Kommentar den folgenden Code ein:
 
-- **Dauer**: Anzeige in Millisekunden, wie lange es dauerte, bis das Modell reagiert hat.
+    ```
+           profile = generate_trip_profile(hike)
+           if not profile:
+           print("Failed to generate trip profile. Please check Application Insights for trace.")
+           exit(1)
 
-> Vergleichen Sie zeilenübergreifend, um zu untersuchen, welche Aufforderungsmuster zu längeren Verarbeitungszeiten führen.
+           print(f"\n📋 Trip Profile for {hike}:")
+           print(json.dumps(profile, indent=2))
+    ```
 
-- **Eingabe**: Zeigt die Benutzernachricht an, die an das Modell gesendet wurde.
+1. Suchen Sie im Skript **# Run match product function**.
+1. Fügen Sie unterhalb und **ausgerichtet mit** diesem Kommentar den folgenden Code ein:
 
-> Verwenden Sie diese Spalte, um zu bewerten, welche Promptformulierungen effizient oder problematisch sind.
+    ```
+           matched = match_products(profile.get("recommendedGear", []))
+           print("\n🛒 Recommended Products from Lakeshore Retail:")
+           print("\n".join(matched))
+    ```
 
-- **System**: Zeigt die in der Eingabeaufforderung verwendete Systemmeldung an (sofern vorhanden).
+1. **Speichern Sie die Änderungen**, die Sie im Skript vorgenommen haben.
+1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, **um das Skript auszuführen**:
 
-> Vergleichen Sie Einträge, um die Auswirkungen der Verwendung oder Änderung von Systemmeldungen zu bewerten.
+    ```
+   python start-prompt.py
+    ```
 
-- **Ausgabe**: Enthält die Antwort des Modells.
+1. Beschreiben Sie bitte die Art der Wanderung, die Sie suchen, zum Beispiel:
 
-> Verwenden Sie sie, um Ausführlichkeit, Relevanz und Konsistenz zu bewerten. Insbesondere im Verhältnis zur Tokenanzahl und Dauer.
+    ```
+   I want to go for a multi-day adventure along the beach
+    ```
 
-## 6. (OPTIONAL) Erstellen einer Warnung
+> **Hinweis**: Es kann einige Minuten dauern, bis Überwachungsdaten in Azure Monitor angezeigt werden.
 
-Wenn Sie über zusätzliche Zeit verfügen, richten Sie eine Benachrichtigung ein, die Sie informiert, wenn die Modelllatenz einen bestimmten Schwellenwert überschreitet. Dies ist eine Übung, die Sie herausfordern soll, daher sind die Anweisungen bewusst weniger detailliert gehalten.
+### Anzeigen Ihrer Ablaufverfolgungen im Azure AI Foundry-Portal
 
-- Erstellen Sie in Azure Monitor eine **neue Warnungsregel** für Ihr Azure KI Foundry-Projekt und -Modell.
-- Wählen Sie eine Metrik wie **Anforderungsdauer (ms)** aus, und definieren Sie einen Schwellenwert (z. B. größer als 4000 ms).
-- Erstellen Sie eine **neue Aktionsgruppe** , um zu definieren, wie Sie benachrichtigt werden wollen.
+1. Navigieren Sie zum Azure KI Foundry-Portal.
+1. Eine neue Ablaufverfolgung mit demselben Namen **trail_guide_session** sollte angezeigt werden. Aktualisieren Sie ihre Ansicht bei Bedarf.
+1. Wählen Sie die neue Ablaufverfolgung aus, um die detailliertere Ansicht zu öffnen.
+1. Überprüfen Sie die neuen geschachtelten untergeordneten Abschnitte **trip_profile_generation** und **product_matching**.
+1. Wählen Sie **product_matching** aus, und überprüfen Sie die angezeigten Metadaten.
 
-Warnmeldungen unterstützen Sie bei der Vorbereitung der Produktion, indem sie eine proaktive Überwachung ermöglichen. Die von Ihnen konfigurierten Warnmeldungen hängen von den Prioritäten Ihres Projekts und davon ab, wie Ihr Team Risiken messen und mindern möchte.
+    In der Funktion „product_matching“ haben Sie **span.set_attribute("matched.count", len(matched))** eingefügt. Durch Festlegen des Attributs mit dem Schlüssel-Wert-Paar **matched.count** und der Länge der Variablen „matched“ haben Sie diese Informationen zur Ablaufverfolgung **product_matching** hinzugefügt. Sie finden dieses Schlüssel-Wert-Paar unter **Attributen** in den Metadaten.
+
+## (OPTIONAL) Ablaufverfolgung eines Fehlers
+
+Wenn Sie zusätzliche Zeit haben, können Sie überprüfen, wie Ablaufverfolgungen verwendet werden, wenn ein Fehler auftritt. Ein Skript, das wahrscheinlich einen Fehler auslöst, wird Ihnen zur Verfügung gestellt. Führen Sie es aus, und überprüfen Sie die Ablaufverfolgungen.
+
+Dies ist eine Übung, die Sie herausfordern soll, daher sind die Anweisungen bewusst weniger detailliert gehalten.
+
+1. Öffnen Sie in der Cloud Shell das Skript **error-prompt.py**. Dieses Skript befindet sich im selben Verzeichnis wie das Skript **start-prompt.py**. Überprüfen Sie den Inhalt.
+1. Führen Sie das Skript **error-prompt.py** aus. Geben Sie eine Antwort in der Befehlszeile an, wenn Sie dazu aufgefordert werden.
+1. *Hoffentlich* enthält die Ausgabemeldung den folgenden Text: **Die Reiseerstellung ist fehlgeschlagen. Überprüfen Sie Application Insights auf eine Ablaufverfolgung.**.
+1. Navigieren Sie zur Ablaufverfolgung für die **trip_profile_generation** und untersuchen Sie, warum ein Fehler aufgetreten ist.
+
+<br>
+<details>
+<summary><b>Erhalten Sie die Antwort auf</b>: Warum bei Ihnen ein Fehler aufgetreten sein könnte...</summary><br>
+<p>Wenn Sie die LLM-Ablaufverfolgung für die generate_trip_profile-Funktion prüfen, werden Sie feststellen, dass die Antwort des Assistenten Backticks und das Wort JSON enthält, um die Ausgabe als Codeblock zu formatieren.
+
+Dies ist zwar hilfreich für die Anzeige, verursacht jedoch Probleme im Code, da die Ausgabe nicht mehr gültig ist. Dies führt zu einem Analysefehler während der weiteren Verarbeitung.
+
+Der Fehler ist wahrscheinlich darauf zurückzuführen, dass der LLM angewiesen ist, ein bestimmtes Format für seine Ausgabe einzuhalten. Die Aufnahme der Anweisungen in die Benutzeraufforderung scheint effektiver zu sein als die Aufnahme in die Systemaufforderung.</p>
+</details>
 
 ## Wo finde ich andere Übungsszenarien?
 
