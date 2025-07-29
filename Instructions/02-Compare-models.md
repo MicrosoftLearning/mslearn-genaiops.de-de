@@ -1,6 +1,7 @@
 ---
 lab:
   title: Vergleichen von Sprachmodellen aus dem Modellkatalog
+  description: 'Hier erfahren Sie, wie Sie geeignete Modelle für Ihr Projekt für generative KI vergleichen und auswählen.'
 ---
 
 ## Vergleichen von Sprachmodellen aus dem Modellkatalog
@@ -9,7 +10,7 @@ Wenn Sie Ihren Anwendungsfall definiert haben, können Sie mithilfe des Modellka
 
 In dieser Übung vergleichen Sie zwei Sprachmodelle über den Modellkatalog im Azure AI Foundry-Portal.
 
-Diese Übung dauert ungefähr **25** Minuten.
+Diese Übung dauert ungefähr **30** Minuten.
 
 ## Szenario
 
@@ -31,6 +32,10 @@ Sie können einen Azure KI-Hub erstellen und manuell über das Azure AI Foundry-
 
     > **Hinweis**: Wenn Sie zuvor eine Cloud-Shell erstellt haben, die eine *Bash*-Umgebung verwendet, wechseln Sie zu ***PowerShell***.
 
+1. Wählen Sie in der Cloud Shell-Symbolleiste im Menü **Einstellungen** die Option **Zur klassischen Version wechseln**.
+
+    **<font color="red">Stellen Sie sicher, dass Sie zur klassischen Version der Cloud Shell gewechselt haben, bevor Sie fortfahren.</font>**
+
 1. Geben Sie im PowerShell-Fenster die folgenden Befehle ein, um das Repository dieser Übung zu klonen:
 
      ```powershell
@@ -50,7 +55,7 @@ Sie können einen Azure KI-Hub erstellen und manuell über das Azure AI Foundry-
 1. Geben Sie als Nächstes den folgenden Befehl ein, um die Starter-Vorlage auszuführen. Sie wird einen KI-Hub mit abhängigen Ressourcen, ein KI-Projekt, KI-Dienste und einen Online-Endpunkt bereitstellen. Außerdem werden die Modelle GPT-4 Turbo, GPT-4o und GPT-4o mini bereitgestellt.
 
      ```powershell
-    azd up  
+    azd up
      ```
 
 1. Wenn Sie dazu aufgefordert werden, wählen Sie aus, welches Abonnement Sie verwenden möchten, und wählen Sie dann einen der folgenden Speicherorte für die Ressourcenbereitstellung aus:
@@ -78,20 +83,11 @@ Sie können einen Azure KI-Hub erstellen und manuell über das Azure AI Foundry-
         </ul>
     </details>
 
-1. Nachdem alle Ressourcen bereitgestellt wurden, verwenden Sie die folgenden Befehle, um den Endpunkt abzurufen und auf Ihre KI Services-Ressource zuzugreifen. Beachten Sie, dass Sie `<rg-env_name>` und `<aoai-xxxxxxxxxx>` durch die Namen Ihrer Ressourcengruppe und der KI Services-Ressource ersetzen müssen. Beide werden im Ergebnis der Bereitstellung aufgeführt.
-
-     ```powershell
-    Get-AzCognitiveServicesAccount -ResourceGroupName <rg-env_name> -Name <aoai-xxxxxxxxxx> | Select-Object -Property endpoint
-    Get-AzCognitiveServicesAccountKey -ResourceGroupName <rg-env_name> -Name <aoai-xxxxxxxxxx> | Select-Object -Property Key1
-     ```
-
-1. Kopieren Sie diese Werte, da sie später verwendet werden.
-
 ## Vergleichen von Modellen
 
 Sie wissen, dass es drei Modelle gibt, die Bilder als Eingabe akzeptieren, deren Rückschlussinfrastruktur vollständig von Azure verwaltet wird. Jetzt müssen Sie sie vergleichen, um zu entscheiden, welches für unseren Anwendungsfall ideal ist.
 
-1. Öffnen Sie in einem Webbrowser das [Azure KI Foundry Portal](https://ai.azure.com) unter `https://ai.azure.com` und melden Sie sich mit Ihren Azure-Anmeldedaten an.
+1. Öffnen Sie auf einer neuen Browserregisterkarte das [Azure AI Foundry-Portal](https://ai.azure.com) unter `https://ai.azure.com`, und melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
 1. Wenn Sie dazu aufgefordert werden, wählen Sie das zuvor erstellte KI-Projekt aus.
 1. Navigieren Sie über das Menü auf der linken Seite zur Seite **Modellkatalog**.
 1. Wählen Sie **Modelle vergleichen** aus (die Schaltfläche finden Sie neben den Filtern im Suchbereich).
@@ -107,14 +103,95 @@ Sie wissen, dass es drei Modelle gibt, die Bilder als Eingabe akzeptieren, deren
 
 Die Genauigkeit der Benchmark-Metrik wird auf der Grundlage öffentlich verfügbarer generischer Datensätze berechnet. Aus der Grafik können wir bereits eines der Modelle herausfiltern, da es die höchsten Kosten pro Token, aber nicht die höchste Genauigkeit aufweist. Bevor Sie eine Entscheidung treffen, sollten wir die Qualität der Ergebnisse der beiden verbleibenden Modelle untersuchen, die für Ihren Anwendungsfall spezifisch sind.
 
-## Einrichten Ihrer lokalen Entwicklungsumgebung
+## Einrichten Ihrer Entwicklungsumgebung in Cloud Shell
 
-Um schnell zu experimentieren und zu durchlaufen, verwenden Sie ein Notizbuch mit Python-Code in Visual Studio (VS) Code. Lassen Sie uns VS Code für die lokale Ideenfindung vorbereiten.
+Zum schnellen Experimentieren und Durchlaufen verwenden Sie eine Reihe von Python-Skripts in Cloud Shell.
 
-1. Öffnen Sie den VS Code und **klonen Sie** das folgende Git-Repository: [https://github.com/MicrosoftLearning/mslearn-genaiops.git](https://github.com/MicrosoftLearning/mslearn-genaiops.git)
-1. Speichern Sie den Klon auf einem lokalen Laufwerk, und öffnen Sie den Ordner nach dem Klonen.
-1. Öffnen Sie im VS Code Explorer (linker Bereich) das Notizbuch **02-Compare-models.ipynb** im Ordner **Files/02**.
-1. Führen Sie alle Zellen im Notebook aus.
+1. Wechseln Sie im Azure AI Foundry-Portal zur **Übersichtsseite** Ihres Projekts.
+1. Beachten Sie im Bereich **Projektdetails** die **Projektverbindungszeichenfolge**.
+1. Speichern Sie die Zeichenfolge in einem Editor. Sie verwenden diese Verbindungszeichenfolge, um eine Verbindung mit Ihrem Projekt in einer Clientanwendung herzustellen.
+1. Navigieren Sie zurück zur Registerkarte des Azure Portals, öffnen Sie Cloud Shell, wenn Sie den Dienst zuvor geschlossen haben, und führen Sie den folgenden Befehl aus, um zu dem Ordner mit den in dieser Übung verwendeten Codedateien zu navigieren:
+
+     ```powershell
+    cd ~/mslearn-genaiops/Files/02/
+     ```
+
+1. Geben Sie im Befehlszeilenfenster der Cloud Shell den folgenden Befehl ein, um die zu verwendenden Bibliotheken zu installieren:
+
+    ```powershell
+   python -m venv labenv
+   ./labenv/bin/Activate.ps1
+   pip install python-dotenv azure-identity azure-ai-projects openai matplotlib
+    ```
+
+1. Geben Sie den folgenden Befehl ein, um die bereitgestellte Konfigurationsdatei zu öffnen:
+
+    ```powershell
+   code .env
+    ```
+
+    Die Datei wird in einem Code-Editor geöffnet.
+
+1. Ersetzen Sie in der Codedatei den Platzhalter **your_project_connection_string** durch die Verbindungszeichenfolge für Ihr Projekt (kopiert von der Seite **Übersicht** des Projekts im Azure AI Foundry-Portal). Beachten Sie, dass in der Übung verwendet werden das erste und das zweite Modell verwendet werden: **gpt-4o** bzw. **gpt-4o-mini**.
+1. *Nachdem* Sie den Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Speichern“**, um Ihre Änderungen zu speichern. Verwenden Sie dann den Befehl **STRG+Q**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Beenden“**, um den Code-Editor zu schließen, während die Cloud Shell-Befehlszeile geöffnet bleibt.
+
+## Senden von Prompts an Ihre bereitgestellten Modelle
+
+Sie führen nun mehrere Skripts aus, die verschiedene Prompts an Ihre bereitgestellten Modelle senden. Diese Interaktionen generieren Daten, die Sie später in Azure Monitor beobachten können.
+
+1. Führen Sie den folgenden Befehl aus, um **das erste Skript** anzuzeigen, das bereitgestellt wurde:
+
+    ```powershell
+   code model1.py
+    ```
+
+Das Skript codiert das in dieser Übung verwendete Bild in einer Daten-URL. Diese URL wird verwendet, um das Bild direkt in die Chatvervollständigungsanforderung zusammen mit dem ersten Textprompt einzubetten. Als Nächstes gibt das Skript die Antwort des Modells aus, fügt es dem Chatverlauf hinzu und sendet dann einen zweiten Prompt. Der zweite Prompt wird übermittelt und gespeichert, um die später überwachten Metriken aussagekräftiger zu machen. Sie können jedoch die Auskommentierung des optionalen Abschnitts des Codes aufheben, um die zweite Antwort ebenfalls als Ausgabe zu erhalten.
+
+1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, um das **erste** Skript auszuführen:
+
+    ```powershell
+   python model1.py
+    ```
+
+    Das Modell generiert eine Antwort, die mit Application Insights für eine weitere Analyse erfasst wird. Verwenden Sie nun das zweite Modell, um die Unterschiede zu untersuchen.
+
+1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, um das **zweite** Skript auszuführen:
+
+    ```powershell
+   python model2.py
+    ```
+
+    Sie haben nun Ausgaben aus beiden Modellen: Unterscheiden sie sich in irgendeiner Weise?
+
+    > **Hinweis:** Optional können Sie die als Antworten angegebenen Skripts testen, indem Sie die Codeblöcke kopieren, den Befehl `code your_filename.py` ausführen, den Code in den Editor einfügen, die Datei speichern und dann den Befehl `python your_filename.py` ausführen. Wenn das Skript erfolgreich ausgeführt wurde, sollten Sie über ein gespeichertes Bild verfügen, das mit `download imgs/gpt-4o.jpg` oder `download imgs/gpt-4o-mini.jpg` heruntergeladen werden kann.
+
+## Vergleichen der Tokenverwendung von Modellen
+
+Schließlich führen Sie ein drittes Skript aus, das die Anzahl der verarbeiteten Token im Laufe der Zeit für jedes Modell darstellt. Diese Daten werden aus Azure Monitor abgerufen.
+
+1. Bevor Sie das letzte Skript ausführen, müssen Sie die Ressourcen-ID für Azure KI Services aus dem Azure-Portal kopieren. Wechseln Sie zur Übersichtsseite Ihrer Azure KI Services-Ressource, und wählen Sie **JSON-Ansicht** aus. Kopieren Sie die Ressourcen-ID, und ersetzen Sie den Platzhalter `your_resource_id` in der Codedatei:
+
+    ```powershell
+   code plot.py
+    ```
+
+1. Speichern Sie die Änderungen.
+
+1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, um das **dritte** Skript auszuführen:
+
+    ```powershell
+   python plot.py
+    ```
+
+1. Geben Sie nach Abschluss des Skripts den folgenden Befehl ein, um den Metrikplot herunterzuladen:
+
+    ```powershell
+   download imgs/plot.png
+    ```
+
+## Zusammenfassung
+
+Nachdem Sie den Plot überprüft und sich die Benchmarkwerte im Diagramm zu Genauigkeit und Kosten gemerkt haben: Können Sie feststellen, welches Modell am besten für Ihren Anwendungsfall geeignet ist? Überwiegt der Unterschied in der Genauigkeit der Ausgaben den Unterschied in den generierten Token und damit den Kosten?
 
 ## Bereinigen
 

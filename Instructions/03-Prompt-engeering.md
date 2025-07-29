@@ -1,25 +1,30 @@
 ---
 lab:
   title: Erkunden des Prompt Engineerings mit Prompty
+  description: 'Hier erfahren Sie, wie Sie mithilfe von prompty verschiedene Prompts mit Ihrem Sprachmodell schnell testen und verbessern sowie sicherstellen können, dass sie so konstruiert und orchestriert sind, dass sie optimale Ergebnisse erzielen.'
 ---
 
 ## Erkunden des Prompt Engineerings mit Prompty
 
+Diese Übung dauert ca. **45** Minuten.
+
+> **Hinweis**: Diese Übung setzt gewisse Kenntnisse von Azure KI Foundry voraus. Aus diesem Grund sind einige Anweisungen bewusst weniger detailliert gehalten, um eine aktivere Erkundung und praktisches Lernen zu fördern.
+
+## Einführung
+
 Während der Ideenfindung möchten Sie verschiedene Prompts mit Ihrem Sprachmodell schnell testen und verbessern. Es gibt verschiedene Möglichkeiten, wie Sie Prompt Engineering nutzen können: über den Playground im Azure AI Foundry-Portal oder mit Prompty für einen eher Code-First-orientierten Ansatz.
 
-In dieser Übung erkunden Sie die Prompt-Programmierung mit Prompty in Visual Studio Code anhand eines Modells, das über Azure AI Foundry bereitgestellt wird.
+In dieser Übung erkunden Sie das Prompt Engineering mit prompty in Visual Studio Code anhand eines Modells, das über Azure AI Foundry bereitgestellt wird.
 
-Diese Übung dauert ungefähr **40** Minuten.
+## Einrichten der Umgebung
 
-## Szenario
+Um diese Übung abzuschließen benötigen Sie Folgendes:
 
-Stellen Sie sich vor, Sie möchten eine App erstellen, mit der Teilnehmende erfahren, wie man in Python programmiert. In der App möchten Sie einen automatischen Tutor, der den Teilnehmenden beim Schreiben und Auswerten von Code helfen kann. Sie möchten jedoch nicht, dass die Chat-App nur alle Antworten bereitstellt. Sie möchten, dass die Teilnehmenden individuelle Tipps erhalten, die sie zum Nachdenken über das weitere Vorgehen anregen.
+- Ein Azure KI Foundry-Hub.
+- Ein Azure KI Foundry-Projekt
+- Ein bereitgestelltes Modell (z. B. GPT-4o),
 
-Sie haben ein GPT-4-Modell ausgewählt, mit dem Sie experimentieren möchten. Sie möchten nun Prompt Engineering anwenden, um das Verhalten des Chats so zu steuern, dass er als Tutor fungiert, der personalisierte Hinweise generiert.
-
-Beginnen wir mit der Bereitstellung der erforderlichen Ressourcen für die Arbeit mit diesem Modell im Azure AI Foundry-Portal.
-
-## Erstellen eines Azure KI-Hubs und eines Projekts
+### Erstellen eines Azure KI-Hubs und eines Projekts
 
 > **Hinweis**: Wenn Sie bereits über einen Azure KI-Hub und ein Projekt verfügen, können Sie dieses Verfahren überspringen und Ihr vorhandenes Projekt verwenden.
 
@@ -87,7 +92,7 @@ Sie können einen Azure AI-Hub und ein Projekt manuell über das Azure AI Foundr
 
 1. Kopieren Sie diese Werte, da sie später verwendet werden.
    
-## Einrichten Ihrer lokalen Entwicklungsumgebung
+### Einrichten Ihrer lokalen Entwicklungsumgebung
 
 Um schnell zu experimentieren und zu iterieren, verwenden Sie Prompty in Visual Studio (VS) Code. Lassen Sie uns VS Code für die lokale Ideenfindung vorbereiten.
 
