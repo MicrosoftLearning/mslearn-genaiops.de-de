@@ -1,6 +1,7 @@
 ---
 lab:
   title: Überwachen der Anwendung für generative KI
+  description: 'Hier erfahren Sie, wie Sie Interaktionen mit Ihrem bereitgestellten Modell überwachen und Erkenntnisse zur Optimierung ihrer Nutzung mit der Anwendung für generative KI erhalten.'
 ---
 
 # Überwachen der Anwendung für generative KI
@@ -13,7 +14,7 @@ Diese Übung dauert ca. **30** Minuten.
 
 In dieser Übung aktivieren Sie die Überwachung für eine App zum Abschließen von Chats und zeigen deren Leistung in Azure Monitor an. Sie interagieren mit Ihrem bereitgestellten Modell, um Daten zu generieren, die generierten Daten über das Dashboard „Einblicke für generative KI-Anwendungen“ anzuzeigen und Warnmeldungen einzurichten, um die Bereitstellung des Modells zu optimieren.
 
-## 1. Einrichten der Umgebung
+## Einrichten der Umgebung
 
 Um diese Übung abzuschließen benötigen Sie Folgendes:
 
@@ -22,53 +23,60 @@ Um diese Übung abzuschließen benötigen Sie Folgendes:
 - Ein bereitgestelltes Modell (z. B. GPT-4o),
 - Eine verbundene Application Insights-Ressource.
 
-### A. Erstellen eines Azure KI Foundry-Hubs und -Projekts
+### Erstellen eines Azure KI Foundry-Hubs und -Projekts
 
 Um einen Hub und ein Projekt schnell einzurichten, finden Sie unten einfache Anweisungen zur Verwendung der Benutzeroberfläche des Azure KI Foundry-Portals.
 
-1. Navigieren Sie zum Azure KI Foundry-Portal: Öffnen Sie [https://ai.azure.com](https://ai.azure.com).
-1. Melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
-1. Erstellen eines Projekts:
-    1. Navigieren Sie zu **allen Hubs + Projekten**.
-    1. Wählen Sie **+ New project** aus.
-    1. Geben Sie einen **Projektnamen** ein.
-    1. Wenn Sie dazu aufgefordert werden, **erstellen Sie einen neuen Hub**.
-    1. Anpassen des Hubs:
+1. Öffnen Sie in einem Webbrowser unter `https://ai.azure.com` das [Azure KI Foundry-Portal](https://ai.azure.com) und melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
+1. Wählen Sie auf der Startseite **+ Projekt erstellen**.
+1. Geben Sie im Assistenten **Projekt erstellen** einen gültigen Namen für Ihr Projekt ein und wählen Sie, falls ein vorhandener Hub vorgeschlagen wird, die Option, einen neuen zu erstellen. Überprüfen Sie dann die Azure-Ressourcen, die automatisch erstellt werden, um Ihren Hub und Ihr Projekt zu unterstützen.
+1. Wählen Sie **Anpassen** aus und legen Sie die folgenden Einstellungen für Ihren Hub fest:
+    - **Hubname**: *Geben Sie einen gültigen Namen für Ihren Hub an*
+    - **Abonnement:** *Geben Sie Ihr Azure-Abonnement an.*
+    - **Ressourcengruppe**: *Erstellen Sie eine Ressourcengruppe, oder wählen Sie eine Ressourcengruppe aus*.
+    - **Standort**: Wählen Sie **Hilfe bei der Auswahl** und wählen Sie dann **gpt-4o** im Fenster Standort-Hilfsprogramm und verwenden Sie die empfohlene Region\*
+    - A**zure KI Services oder Azure OpenAI verbinden**: *Wählen Sie Neuen KI-Dienst erstellen aus*
+    - **Azure KI-Suche verbinden**: Verbindung überspringen
 
-        1. Wählen Sie **Abonnement**, **Ressourcengruppe**, **Speicherort** usw. aus.
-        1. Verbinden Sie eine **neue Azure KI Services-Ressource** (KI-Suche überspringen).
+    > \* Azure OpenAI-Ressourcen sind durch regionale Modellkontingente eingeschränkt. Sollte im weiteren Verlauf der Übung eine Kontingentgrenze überschritten werden, müssen Sie möglicherweise eine weitere Ressource in einer anderen Region anlegen.
 
-    1. Überprüfen Sie die Angaben, und wählen Sie **Erstellen** aus.
+1. Klicken Sie auf **Weiter**, um Ihre Konfiguration zu überprüfen. Klicken Sie auf **Erstellen** und warten Sie, bis der Vorgang abgeschlossen ist.
 
-1. **Warten Sie, bis die Bereitstellung abgeschlossen ist** (~ 1–2 Minuten).
-
-### B. Bereitstellen eines Modells
+### Bereitstellen eines Modells
 
 Um Daten zu generieren, die Sie überwachen können, müssen Sie zuerst ein Modell bereitstellen und damit interagieren. In den Anweisungen werden Sie aufgefordert, ein GPT-4o-Modell bereitzustellen, jedoch **können Sie jedes Modell** aus der Azure OpenAI Service-Sammlung verwenden, das Ihnen zur Verfügung steht.
 
 1. Verwenden Sie das Menü auf der linken Seite, wählen Sie unter **Meine Assets** die Seite **Modelle + Endpunkte** aus.
-1. Stellen Sie ein **Basismodell** bereit, und wählen Sie **gpt-4o** aus.
-1. **Passen Sie die Bereitstellungsdetails an**.
-1. Legen Sie die **Kapazität** auf **5K-Token pro Minute (TPM)** fest.
+1. Wählen Sie im Menü **+ Modell bereitstellen** die Option **Basismodell bereitstellen** aus.
+1. Wählen Sie in der Liste das Modell **gpt-4o** aus, und stellen Sie es mit den folgenden Einstellungen bereit. Wählen Sie dabei in den Bereitstellungsdetails die Option **Anpassen** aus:
+    - **Bereitstellungsname:***Ein gültiger Name für Ihre Modellimplementierung*
+    - **Bereitstellungstyp**: Standard
+    - **Automatische Versionsaktualisierung**: Aktiviert
+    - **Modellversion**: *Wählen Sie die neueste verfügbare Version aus.*
+    - **Verbundene AI-Ressource**: *Wählen Sie Ihre Azure OpenAI-Ressourcenverbindung*
+    - **Ratenbegrenzung für Token pro Minute (Tausender)**: 1 K
+    - **Inhaltsfilter**: StandardV2 
+    - **Dynamische Quote aktivieren**: Deaktiviert
 
-Der Hub und das Projekt sind bereit, wobei alle erforderlichen Azure-Ressourcen automatisch bereitgestellt werden.
+    > **Hinweis:** Durch das Verringern des TPM wird die Überlastung des Kontingents vermieden, das in dem von Ihnen verwendeten Abonnement verfügbar ist. 1.000 TPM sollten für die in dieser Übung verwendeten Daten ausreichend sein. Wenn Ihr verfügbares Kontingent darunter liegt, können Sie die Übung zwar durchführen, aber es können Fehler auftreten, wenn das Kontingent überschritten wird.
 
-### C. Verbinden von Application Insights
+1. Warten Sie, bis die Bereitstellung abgeschlossen ist.
 
-Verbinden Sie Application Insights mit Ihrem Projekt in Azure KI Foundry, um gesammelte Daten für die Überwachung zu starten.
+### Verbinden von Application Insights
 
-1. Öffnen Sie Ihr Projekt im Azure KI Foundry-Portal.
+Verbinden Sie Application Insights mit Ihrem Projekt in Azure AI Foundry, um mit dem Sammeln von Daten für die Überwachung zu beginnen.
+
 1. Verwenden Sie das Menü auf der linken Seite, und wählen Sie die Seite **Ablaufverfolgung** aus.
 1. **Erstellen Sie eine neue** Application Insights-Ressource, um eine Verbindung mit Ihrer App herzustellen.
-1. Geben Sie den **Namen der Application Insights-Ressource** ein.
+1. Geben Sie einen Application Insights-Ressourcennamen ein, und wählen Sie **Erstellen** aus.
 
 Application Insights ist jetzt mit Ihrem Projekt verbunden, und die Daten werden für die Analyse erfasst.
 
-## 2. Interagieren mit einem bereitgestellten Modell
+## Interagieren mit einem bereitgestellten Modell
 
 Sie interagieren programmgesteuert mit Ihrem bereitgestellten Modell, indem Sie eine Verbindung mit Ihrem Azure KI Foundry-Projekt mithilfe von Azure Cloud Shell einrichten. Auf diese Weise können Sie eine Eingabeaufforderung an das Modell senden und Überwachungsdaten generieren.
 
-### A. Herstellen einer Verbindung mit einem Modell über die Cloud Shell
+### Herstellen einer Verbindung mit einem Modell über die Cloud Shell
 
 Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die Interaktion mit Ihrem Modell authentifiziert werden sollen. Anschließend greifen Sie auf die Azure Cloud Shell zu und aktualisieren die Konfiguration, um die bereitgestellten Eingabeaufforderungen an Ihr eigenes bereitgestelltes Modell zu senden.
 
@@ -90,6 +98,8 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
     ```
 
     Mit diesem Befehl wird das GitHub-Repository geklont, das die Codedateien für diese Übung enthält.
+
+    > **TIPP**: Wenn Sie Befehle in die Cloudshell einfügen, kann die Ausgabe einen großen Teil des Bildschirmpuffers in Anspruch nehmen. Sie können den Bildschirm löschen, indem Sie den Befehl `cls` eingeben, um sich besser auf die einzelnen Aufgaben konzentrieren zu können.
 
 1. Navigieren Sie nach dem Klonen des Repositorys zu dem Ordner, der die Codedateien der Anwendung enthält:  
 
@@ -118,11 +128,11 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
     1. Ersetzen Sie den Platzhalter **your_project_connection_string** durch die Verbindungszeichenfolge für Ihr Projekt (kopiert von der Seite **Übersicht** des Projekts im Azure KI-Foundry-Portal).
     1. Ersetzen Sie den Platzhalter **your_model_deployment** durch den Namen, den Sie Ihrer GPT-4o-Modellbereitstellung zugewiesen haben (standardmäßig `gpt-4o`).
 
-1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S** oder **Rechtsklick > Speichern**, um **Ihre Änderungen zu speichern**.
+1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Speichern“**, um **Ihre Änderungen zu speichern**. Verwenden Sie dann den Befehl **STRG+Q**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Beenden“**, um den Code-Editor zu schließen, während die Cloud Shell-Befehlszeile geöffnet bleibt.
 
-### B. Senden von Eingabeaufforderungen an Ihr bereitgestelltes Modell
+### Senden von Eingabeaufforderungen an Ihr bereitgestelltes Modell
 
-Sie führen nun mehrere Skripts aus, die verschiedene Eingabeaufforderungen an Ihr bereitgestelltes Modell senden. Diese Interaktionen generieren Daten, die Sie später in Azure Monitor beobachten können.
+Sie führen nun mehrere Skripts aus, die verschiedene Prompts an Ihre bereitgestellten Modelle senden. Diese Interaktionen generieren Daten, die Sie später in Azure Monitor beobachten können.
 
 1. Führen Sie den folgenden Befehl aus, um **das erste Skript** anzuzeigen, das bereitgestellt wurde:
 
@@ -138,7 +148,7 @@ Sie führen nun mehrere Skripts aus, die verschiedene Eingabeaufforderungen an I
 
     Das Modell generiert eine Antwort, die mit Application Insights für eine weitere Analyse erfasst wird. Lassen Sie uns unsere Eingabeaufforderungen variieren, um ihre Effekte zu untersuchen.
 
-1. **Öffnen und überprüfen Sie das Skript**, wo die Eingabeaufforderung anweist, **nur mit einem Satz und einer Liste zu antworten**:
+1. **Öffnen und überprüfen Sie das Skript**, wo der Prompt das Modell anweist, **nur mit einem Satz und einer Liste zu antworten**:
 
     ```
    code short-prompt.py
@@ -178,22 +188,22 @@ Nachdem Sie nun mit dem Modell interagiert haben, können Sie die Daten in Azure
 
 > **Hinweis**: Es kann einige Minuten dauern, bis Überwachungsdaten in Azure Monitor angezeigt werden.
 
-## 4. Überwachungsdaten in Azure Monitor anzeigen
+## Anzeigen von Überwachungsdaten in Azure Monitor
 
 Um Daten anzuzeigen, die aus Ihren Modellinteraktionen gesammelt werden, greifen Sie auf das Dashboard zu, das mit einer Arbeitsmappe in Azure Monitor verknüpft ist.
 
-### A. Navigieren Sie im Azure KI-Foundry-Portal zu Azure Monitor.
+### Navigieren Sie im Azure KI-Foundry-Portal zu Azure Monitor.
 
 1. Navigieren Sie in Ihrem Browser zu der Registerkarte, auf der das **Azure AI Foundry-Portal** geöffnet ist.
 1. Wählen Sie auf der linken Seite das Menü **Ablaufverfolgung** aus.
 1. Wählen Sie oben den Link „**Sehen Sie sich Ihr Dashboard mit Einblicken für generative KI-Anwendungen an**“ aus. Der Link öffnet Azure Monitor auf einer neuen Registerkarte.
 1. Überprüfen Sie die **Übersicht** mit zusammengefassten Daten zu den Interaktionen mit Ihrem bereitgestellten Modell.
 
-## 5. Interpretieren von Überwachungsmetriken in Azure Monitor
+## Interpretieren von Überwachungsmetriken in Azure Monitor
 
 Nun ist es der Moment gekommen, sich mit den Daten auseinanderzusetzen und mit der Interpretation zu beginnen.
 
-### A. Überprüfen der Tokenverwendung
+### Überprüfen der Tokenverwendung
 
 Konzentrieren Sie sich zuerst auf den Abschnitt **Tokenverwendung** und überprüfen Sie die folgenden Metriken:
 
@@ -213,7 +223,7 @@ Konzentrieren Sie sich zuerst auf den Abschnitt **Tokenverwendung** und überpr�
 
 > Nützlich für die Analyse des Durchsatzes und verständnis der durchschnittlichen Kosten pro Anruf.
 
-### B. Vergleichen der einzelnen Eingabeaufforderungen
+### Vergleichen der einzelnen Eingabeaufforderungen
 
 Scrollen Sie nach unten, um die **Gen KI Spans** zu finden, die als Tabelle dargestellt wird, in der jede Eingabeaufforderung als neue Datenzeile dargestellt wird. Überprüfen und vergleichen Sie den Inhalt der folgenden Spalten:
 
@@ -237,7 +247,7 @@ Scrollen Sie nach unten, um die **Gen KI Spans** zu finden, die als Tabelle darg
 
 > Verwenden Sie sie, um Ausführlichkeit, Relevanz und Konsistenz zu bewerten. Insbesondere im Verhältnis zur Tokenanzahl und Dauer.
 
-## 6. (OPTIONAL) Erstellen einer Warnung
+## (OPTIONAL) Erstellen einer Warnung
 
 Wenn Sie über zusätzliche Zeit verfügen, richten Sie eine Benachrichtigung ein, die Sie informiert, wenn die Modelllatenz einen bestimmten Schwellenwert überschreitet. Dies ist eine Übung, die Sie herausfordern soll, daher sind die Anweisungen bewusst weniger detailliert gehalten.
 

@@ -1,6 +1,7 @@
 ---
 lab:
   title: Analysieren und Debuggen Ihrer generativen KI-App mit Ablaufverfolgung
+  description: 'Hier erfahren Sie, wie Sie Ihre Anwendung für generative KI debuggen, indem Sie den Workflow von der Benutzereingabe bis hin zur Modellantwort und Nachverarbeitung nachverfolgen.'
 ---
 
 # Analysieren und Debuggen Ihrer generativen KI-App mit Ablaufverfolgung
@@ -28,38 +29,48 @@ Um diese Übung abzuschließen benötigen Sie Folgendes:
 
 Um einen Hub und ein Projekt schnell einzurichten, finden Sie unten einfache Anweisungen zur Verwendung der Benutzeroberfläche des Azure KI Foundry-Portals.
 
-1. Navigieren Sie zum Azure KI Foundry-Portal: Öffnen Sie [https://ai.azure.com](https://ai.azure.com).
-1. Melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
-1. Erstellen eines Projekts:
-    1. Navigieren Sie zu **allen Hubs + Projekten**.
-    1. Wählen Sie **+ New project** aus.
-    1. Geben Sie einen **Projektnamen** ein.
-    1. Wenn Sie dazu aufgefordert werden, **erstellen Sie einen neuen Hub**.
-    1. Anpassen des Hubs:
-        1. Wählen Sie **Abonnement**, **Ressourcengruppe**, **Speicherort** usw. aus.
-        1. Verbinden Sie eine **neue Azure KI Services-Ressource** (KI-Suche überspringen).
-    1. Überprüfen Sie die Angaben, und wählen Sie **Erstellen** aus.
-1. **Warten Sie, bis die Bereitstellung abgeschlossen ist** (~ 1–2 Minuten).
+1. Öffnen Sie in einem Webbrowser unter `https://ai.azure.com` das [Azure KI Foundry-Portal](https://ai.azure.com) und melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
+1. Wählen Sie auf der Startseite **+ Projekt erstellen**.
+1. Geben Sie im Assistenten **Projekt erstellen** einen gültigen Namen für Ihr Projekt ein und wählen Sie, falls ein vorhandener Hub vorgeschlagen wird, die Option, einen neuen zu erstellen. Überprüfen Sie dann die Azure-Ressourcen, die automatisch erstellt werden, um Ihren Hub und Ihr Projekt zu unterstützen.
+1. Wählen Sie **Anpassen** aus und legen Sie die folgenden Einstellungen für Ihren Hub fest:
+    - **Hubname**: *Geben Sie einen gültigen Namen für Ihren Hub an*
+    - **Abonnement:** *Geben Sie Ihr Azure-Abonnement an.*
+    - **Ressourcengruppe**: *Erstellen Sie eine Ressourcengruppe, oder wählen Sie eine Ressourcengruppe aus*.
+    - **Standort**: Wählen Sie **Hilfe bei der Auswahl** und wählen Sie dann **gpt-4o** im Fenster Standort-Hilfsprogramm und verwenden Sie die empfohlene Region\*
+    - A**zure KI Services oder Azure OpenAI verbinden**: *Wählen Sie Neuen KI-Dienst erstellen aus*
+    - **Azure KI-Suche verbinden**: Verbindung überspringen
+
+    > \* Azure OpenAI-Ressourcen sind durch regionale Modellkontingente eingeschränkt. Sollte im weiteren Verlauf der Übung eine Kontingentgrenze überschritten werden, müssen Sie möglicherweise eine weitere Ressource in einer anderen Region anlegen.
+
+1. Klicken Sie auf **Weiter**, um Ihre Konfiguration zu überprüfen. Klicken Sie auf **Erstellen** und warten Sie, bis der Vorgang abgeschlossen ist.
 
 ### Bereitstellen eines Modells
 
 Um Daten zu generieren, die Sie überwachen können, müssen Sie zuerst ein Modell bereitstellen und damit interagieren. In den Anweisungen werden Sie aufgefordert, ein GPT-4o-Modell bereitzustellen, jedoch **können Sie jedes Modell** aus der Azure OpenAI Service-Sammlung verwenden, das Ihnen zur Verfügung steht.
 
 1. Verwenden Sie das Menü auf der linken Seite, wählen Sie unter **Meine Assets** die Seite **Modelle + Endpunkte** aus.
-1. Stellen Sie ein **Basismodell** bereit, und wählen Sie **gpt-4o** aus.
-1. **Passen Sie die Bereitstellungsdetails an**.
-1. Legen Sie die **Kapazität** auf **5K-Token pro Minute (TPM)** fest.
+1. Wählen Sie im Menü **+ Modell bereitstellen** die Option **Basismodell bereitstellen** aus.
+1. Wählen Sie in der Liste das Modell **gpt-4o** aus, und stellen Sie es mit den folgenden Einstellungen bereit. Wählen Sie dabei in den Bereitstellungsdetails die Option **Anpassen** aus:
+    - **Bereitstellungsname:***Ein gültiger Name für Ihre Modellimplementierung*
+    - **Bereitstellungstyp**: Standard
+    - **Automatische Versionsaktualisierung**: Aktiviert
+    - **Modellversion**: *Wählen Sie die neueste verfügbare Version aus.*
+    - **Verbundene AI-Ressource**: *Wählen Sie Ihre Azure OpenAI-Ressourcenverbindung*
+    - **Ratenbegrenzung für Token pro Minute (Tausender)**: 5.000
+    - **Inhaltsfilter**: StandardV2 
+    - **Dynamische Quote aktivieren**: Deaktiviert
 
-Der Hub und das Projekt sind bereit, wobei alle erforderlichen Azure-Ressourcen automatisch bereitgestellt werden.
+    > **Hinweis:** Durch das Verringern des TPM wird die Überlastung des Kontingents vermieden, das in dem von Ihnen verwendeten Abonnement verfügbar ist. 5.000 TPM sollten für die in dieser Übung verwendeten Daten ausreichend sein. Wenn Ihr verfügbares Kontingent darunter liegt, können Sie die Übung zwar durchführen, aber es können Fehler auftreten, wenn das Kontingent überschritten wird.
+
+1. Warten Sie, bis die Bereitstellung abgeschlossen ist.
 
 ### Verbinden von Application Insights
 
 Verbinden Sie Application Insights mit Ihrem Projekt in Azure KI Foundry, um gesammelte Daten für die Analyse zu starten.
 
-1. Öffnen Sie Ihr Projekt im Azure KI Foundry-Portal.
 1. Verwenden Sie das Menü auf der linken Seite, und wählen Sie die Seite **Ablaufverfolgung** aus.
 1. **Erstellen Sie eine neue** Application Insights-Ressource, um eine Verbindung mit Ihrer App herzustellen.
-1. Geben Sie den **Namen der Application Insights-Ressource** ein.
+1. Geben Sie einen Application Insights-Ressourcennamen ein, und wählen Sie **Erstellen** aus.
 
 Application Insights ist jetzt mit Ihrem Projekt verbunden, und die Daten werden für die Analyse erfasst.
 
@@ -117,7 +128,7 @@ Beginnen Sie mit dem Abrufen der notwendigen Informationen, um sich für die Int
     1. Ersetzen Sie den Platzhalter **your_project_connection_string** durch die Verbindungszeichenfolge für Ihr Projekt (kopiert von der Seite **Übersicht** des Projekts im Azure KI-Foundry-Portal).
     1. Ersetzen Sie den Platzhalter **your_model_deployment** durch den Namen, den Sie Ihrer GPT-4o-Modellbereitstellung zugewiesen haben (standardmäßig `gpt-4o`).
 
-1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S** oder **Rechtsklick > Speichern**, um **Ihre Änderungen zu speichern**.
+1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Speichern“**, um **Ihre Änderungen zu speichern**. Verwenden Sie dann den Befehl **STRG+Q**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Beenden“**, um den Code-Editor zu schließen, während die Cloud Shell-Befehlszeile geöffnet bleibt.
 
 ### Aktualisieren des Codes für Ihre generative KI-App
 
@@ -252,7 +263,7 @@ Diese Ansicht zeigt die Ablaufverfolgung für eine vollständige Sitzung des Tra
 
 ## Hinzufügen weiterer Funktionen zum Code
 
-
+1. Navigieren Sie in Ihrem Browser zu der Registerkarte, auf der das **Azure-Portal** geöffnet ist.
 1. Führen Sie den folgenden Befehl aus, um **das Skript erneut zu öffnen:**
 
     ```
@@ -309,8 +320,8 @@ Diese Ansicht zeigt die Ablaufverfolgung für eine vollständige Sitzung des Tra
     ```
            profile = generate_trip_profile(hike)
            if not profile:
-           print("Failed to generate trip profile. Please check Application Insights for trace.")
-           exit(1)
+               print("Failed to generate trip profile. Please check Application Insights for trace.")
+               exit(1)
 
            print(f"\n📋 Trip Profile for {hike}:")
            print(json.dumps(profile, indent=2))
@@ -337,6 +348,17 @@ Diese Ansicht zeigt die Ablaufverfolgung für eine vollständige Sitzung des Tra
     ```
    I want to go for a multi-day adventure along the beach
     ```
+
+<br>
+<details>
+<summary><b>Lösungsskript:</b> Falls Ihr Code nicht funktioniert.</summary><br>
+<p>Wenn Sie die LLM-Ablaufverfolgung für die generate_trip_profile-Funktion prüfen, werden Sie feststellen, dass die Antwort des Assistenten Backticks und das Wort JSON enthält, um die Ausgabe als Codeblock zu formatieren.
+
+Dies ist zwar hilfreich für die Anzeige, verursacht jedoch Probleme im Code, da die Ausgabe nicht mehr gültig ist. Dies führt zu einem Analysefehler während der weiteren Verarbeitung.
+
+Der Fehler ist wahrscheinlich darauf zurückzuführen, dass der LLM angewiesen ist, ein bestimmtes Format für seine Ausgabe einzuhalten. Die Aufnahme der Anweisungen in die Benutzeraufforderung scheint effektiver zu sein als die Aufnahme in die Systemaufforderung.</p>
+</details>
+
 
 > **Hinweis**: Es kann einige Minuten dauern, bis Überwachungsdaten in Azure Monitor angezeigt werden.
 
