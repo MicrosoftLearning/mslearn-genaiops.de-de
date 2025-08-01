@@ -26,9 +26,9 @@ Um diese Übung abzuschließen benötigen Sie Folgendes:
 
 ### Erstellen eines Azure KI-Hubs und eines Projekts
 
-> **Hinweis**: Wenn Sie bereits über einen Azure KI-Hub und ein Projekt verfügen, können Sie dieses Verfahren überspringen und Ihr vorhandenes Projekt verwenden.
+> **Hinweis:** Wenn Sie bereits über ein Azure KI-Projekt verfügen, können Sie dieses Verfahren überspringen und Ihr vorhandenes Projekt verwenden.
 
-Sie können einen Azure AI-Hub und ein Projekt manuell über das Azure AI Foundry-Portal erstellen und das in der Übung verwendete Modell bereitstellen. Sie können diesen Prozess jedoch auch mithilfe einer Vorlagenanwendung mit [Azure Developer CLI (azd)](https://aka.ms/azd) automatisieren.
+Sie können ein Azure KI-Projekt manuell über das Azure AI Foundry-Portal erstellen und das in der Übung verwendete Modell bereitstellen. Sie können diesen Prozess jedoch auch mithilfe einer Vorlagenanwendung mit [Azure Developer CLI (azd)](https://aka.ms/azd) automatisieren.
 
 1. Öffnen Sie in einem Webbrowser das [Azure-Portal](https://portal.azure.com) unter `https://portal.azure.com` und melden Sie sich mit Ihren Azure-Anmeldeinformationen an.
 
@@ -43,15 +43,15 @@ Sie können einen Azure AI-Hub und ein Projekt manuell über das Azure AI Foundr
     git clone https://github.com/MicrosoftLearning/mslearn-genaiops
      ```
 
-1. Nachdem das Repository geklont wurde, geben Sie die folgenden Befehle ein, um die Starter-Vorlage zu initialisieren. 
-   
+1. Nachdem das Repository geklont wurde, geben Sie die folgenden Befehle ein, um die Starter-Vorlage zu initialisieren.
+
      ```powershell
     cd ./mslearn-genaiops/Starter
     azd init
      ```
 
 1. Geben Sie der neuen Umgebung nach Aufforderung einen Namen, da dieser als Grundlage für die Vergabe eindeutiger Namen für alle bereitgestellten Ressourcen verwendet wird.
-        
+
 1. Geben Sie als Nächstes den folgenden Befehl ein, um die Starter-Vorlage auszuführen. Sie wird einen KI-Hub mit abhängigen Ressourcen, ein KI-Projekt, KI-Dienste und einen Online-Endpunkt bereitstellen.
 
      ```powershell
@@ -66,7 +66,7 @@ Sie können einen Azure AI-Hub und ein Projekt manuell über das Azure AI Foundr
    - Schweden, Mitte
    - USA (Westen)
    - USA, Westen 3
-    
+
 1. Warten Sie, bis das Skript abgeschlossen ist. Dies dauert in der Regel etwa 10 Minuten, kann aber in manchen Fällen auch länger dauern.
 
     > **Hinweis**: Azure OpenAI-Ressourcen werden auf Mandantenebene durch regionale Kontingente eingeschränkt. Die oben aufgeführten Regionen enthalten das Standardkontingent für die in dieser Übung verwendeten Modelltypen. Durch die zufällige Auswahl einer Region wird das Risiko reduziert, dass eine einzelne Region ihre Kontingentgrenze erreicht. Falls eine Kontingentgrenze erreicht wird, müssen Sie möglicherweise eine weitere Ressourcengruppe in einer anderen Region erstellen. Erfahren Sie mehr über die [Modellverfügbarkeit pro Region](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=standard%2Cstandard-chat-completions#global-standard-model-availability)
@@ -91,101 +91,128 @@ Sie können einen Azure AI-Hub und ein Projekt manuell über das Azure AI Foundr
      ```
 
 1. Kopieren Sie diese Werte, da sie später verwendet werden.
-   
-### Einrichten Ihrer lokalen Entwicklungsumgebung
 
-Um schnell zu experimentieren und zu iterieren, verwenden Sie Prompty in Visual Studio (VS) Code. Lassen Sie uns VS Code für die lokale Ideenfindung vorbereiten.
+### Einrichten Ihrer virtuellen Umgebung in Cloud Shell
 
-1. Öffnen Sie den VS Code und **klonen Sie** das folgende Git-Repository: [https://github.com/MicrosoftLearning/mslearn-genaiops.git](https://github.com/MicrosoftLearning/mslearn-genaiops.git)
-1. Speichern Sie den Klon auf einem lokalen Laufwerk, und öffnen Sie den Ordner nach dem Klonen.
-1. Suchen und installieren Sie im Erweiterungsbereich von VS Code die Erweiterung **Prompty**.
-1. Klicken Sie im VS Code Explorer (linker Bereich) mit der rechten Maustaste auf den Ordner **Files/03**.
-1. Wählen Sie im Dropdownmenü **Neues Prompty** aus.
-1. Öffnen Sie die neu erstellte Datei mit dem Namen **basic.prompty**.
-1. Starten Sie die Prompty-Datei, indem Sie die Schaltfläche **Abspielen** in der oberen rechten Ecke wählen (oder F5 drücken).
-1. Wenn Sie aufgefordert werden, sich anzumelden, wählen Sie **Zulassen**.
-1. Wählen Sie Ihr Azure-Konto aus und melden Sie sich an.
-1. Gehen Sie zurück zu VS Code, wo sich ein Fensterbereich **Output** mit einer Fehlermeldung öffnet. Die Fehlermeldung sollte Ihnen mitteilen, dass das bereitgestellte Modell nicht angegeben ist oder nicht gefunden werden kann.
+Zum schnellen Experimentieren und Durchlaufen verwenden Sie eine Reihe von Python-Skripts in Cloud Shell.
 
-Um den Fehler zu beheben, müssen Sie ein Modell für die Verwendung von Prompty konfigurieren.
+1. Geben Sie im Befehlszeilenbereich von Cloud Shell den folgenden Befehl ein, um zu dem Ordner mit den in dieser Übung verwendeten Codedateien zu navigieren:
 
-## Aktualisieren von Promptmetadaten
+     ```powershell
+    cd ~/mslearn-genaiops/Files/03/
+     ```
 
-Um die Prompty-Datei auszuführen, müssen Sie das Sprachmodell angeben, das für die Generierung der Antwort verwendet werden soll. Die Metadaten werden im *Frontmatter* der Prompty-Datei definiert. Aktualisieren wir die Metadaten mit der Modellkonfiguration und anderen Informationen.
+1. Geben Sie die folgenden Befehle ein, um eine virtuelle Umgebung zu aktivieren und die benötigten Bibliotheken zu installieren:
 
-1. Öffnen Sie den Visual Studio Code-Terminalbereich.
-1. Kopieren Sie die Datei **basic.prompty** (in denselben Ordner) und benennen Sie die Kopie in `chat-1.prompty` um.
-1. Öffnen Sie **chat-1.prompty** und aktualisieren Sie die folgenden Felder, um einige grundlegende Informationen zu ändern:
-
-    - **Name:**
-
-        ```yaml
-        name: Python Tutor Prompt
-        ```
-
-    - **Beschreibung**:
-
-        ```yaml
-        description: A teaching assistant for students wanting to learn how to write and edit Python code.
-        ```
-
-    - **Bereitgestelltes Modell**:
-
-        ```yaml
-        azure_deployment: ${env:AZURE_OPENAI_CHAT_DEPLOYMENT}
-        ```
-
-1. Als Nächstes fügen Sie den folgenden Platzhalter für den API-Schlüssel unter dem Parameter **azure_deployment** ein.
-
-    - **Endpunktschlüssel:**
-
-        ```yaml
-        api_key: ${env:AZURE_OPENAI_API_KEY}
-        ```
-
-1. Speichern Sie die aktualisierte Prompty-Datei.
-
-Die Prompty-Datei verfügt jetzt über alle erforderlichen Parameter, aber einige Parameter verwenden Platzhalter, um die erforderlichen Werte abzurufen. Die Platzhalter werden in der **.env-Datei** im selben Ordner gespeichert.
-
-## Updatemodellkonfiguration
-
-Um anzugeben, welches Modell Prompty verwendet, müssen Sie die Informationen Ihres Modells in der env-Datei angeben.
-
-1. Öffnen Sie die Datei **.env** im Ordner **Files/03**.
-1. Aktualisieren Sie jeden Platzhalter mit den Werten, die Sie zuvor aus der Ausgabe der Modellbereitstellung im Azure-Portal kopiert haben:
-
-    ```yaml
-    - AZURE_OPENAI_CHAT_DEPLOYMENT="gpt-4"
-    - AZURE_OPENAI_ENDPOINT="<Your endpoint target URI>"
-    - AZURE_OPENAI_API_KEY="<Your endpoint key>"
+    ```powershell
+   python -m venv labenv
+   ./labenv/bin/Activate.ps1
+   pip install python-dotenv openai tiktoken azure-ai-projects prompty[azure]
     ```
 
-1. Speichern Sie die ENV-Datei.
-1. Führen Sie die Datei **chat-1.prompty** erneut aus.
+1. Geben Sie den folgenden Befehl ein, um die bereitgestellte Konfigurationsdatei zu öffnen:
 
-Sie sollten nun eine KI-generierte Antwort erhalten, die jedoch nichts mit Ihrem Szenario zu tun hat, da sie nur die Beispieleingabe verwendet. Aktualisieren wir die Vorlage, um sie zu einem KI-Lehrassistenten zu machen.
-
-## Bearbeiten des Beispielabschnitts
-
-Der Beispielabschnitt gibt die Eingaben für das Prompty an und liefert Standardwerte, die verwendet werden, wenn keine Eingaben gemacht werden.
-
-1. Bearbeiten Sie die Felder der folgenden Parameter:
-
-    - **firstName**: Wählen Sie einen anderen Namen aus.
-    - **context**: Entfernen Sie diesen gesamten Abschnitt.
-    - **question**: Ersetzen Sie den bereitgestellten Text durch:
-
-    ```yaml
-    What is the difference between 'for' loops and 'while' loops?
+    ```powershell
+   code .env
     ```
 
-    Ihr **Beispielabschnitt** sollte nun so aussehen:
-    
-    ```yaml
-    sample:
-    firstName: Daniel
-    question: What is the difference between 'for' loops and 'while' loops?
+    Die Datei wird in einem Code-Editor geöffnet.
+
+1. Ersetzen Sie in der Codedatei die Platzhalter **ENDPOINTNAME** und **APIKEY** durch den Endpunkt und die Schlüsselwerte, die Sie zuvor kopiert haben.
+1. *Nachdem* Sie die Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Speichern“**, um Ihre Änderungen zu speichern. Verwenden Sie dann den Befehl **STRG+Q**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Beenden“**, um den Code-Editor zu schließen, während die Cloud Shell-Befehlszeile geöffnet bleibt.
+
+## Optimieren von System-Prompts
+
+Das Minimieren der Länge von System-Prompts bei gleichzeitiger Aufrechterhaltung der Funktionalität in der generativen KI ist für umfangreiche Bereitstellungen von grundlegender Bedeutung. Kürzere Prompts können zu schnelleren Antwortzeiten führen, da das KI-Modell weniger Token verarbeitet und außerdem weniger Rechenressourcen verwendet.
+
+1. Geben Sie den folgenden Befehl ein, um die bereitgestellte Anwendungsdatei zu öffnen:
+
+    ```powershell
+   code optimize-prompt.py
     ```
 
-    1. Führen Sie die aktualisierte Prompty-Datei aus und überprüfen Sie die Ausgabe.
+    Überprüfen Sie den Code, und beachten Sie, dass das Skript die Vorlagendatei `start.prompty` ausführt, die bereits über einen vordefinierten System-Prompt verfügt.
 
+1. Führen Sie `code start.prompty` aus, um den System-Prompt zu überprüfen. Überlegen Sie, wie Sie ihn kürzen können und gleichzeitig die Absicht klar und effektiv ausdrücken. Zum Beispiel:
+
+   ```python
+   original_prompt = "You are a helpful assistant. Your job is to answer questions and provide information to users in a concise and accurate manner."
+   optimized_prompt = "You are a helpful assistant. Answer questions concisely and accurately."
+   ```
+
+   Entfernen Sie redundante Wörter und konzentrieren Sie sich auf die wesentlichen Anweisungen. Speichern Sie den optimierten Prompt in der Datei.
+
+### Testen und Überprüfen der Optimierung
+
+Das Testen von Prompt-Änderungen ist wichtig, um sicherzustellen, dass Sie die Tokennutzung ohne Verlust der Qualität reduzieren.
+
+1. Führen Sie `code token-count.py` aus, um die in der Übung bereitgestellte Tokenzähler-App zu öffnen und zu überprüfen. Wenn Sie einen optimierten Prompt verwendet haben, der sich von dem im obigen Beispiel unterscheidet, können Sie ihn auch in dieser App verwenden.
+
+1. Führen Sie das Skript mit `python token-count.py` aus, und beobachten Sie den Unterschied in der Tokenanzahl. Stellen Sie sicher, dass der optimierte Prompt weiterhin qualitativ hochwertige Antworten liefert.
+
+## Analysieren von Benutzerinteraktionen
+
+Wenn Sie verstehen, wie Benutzende mit Ihrer App interagieren, können Sie Muster identifizieren, die die Tokennutzung erhöhen.
+
+1. Überprüfen Sie ein Beispieldataset mit Benutzer-Prompts:
+
+    - **„Fasse den Inhalt von *Krieg und Frieden* zusammen.“**
+    - **„Was sind einige interessante Fakten über Katzen?“**
+    - **„Erstelle einen detaillierten Geschäftsplan für ein Startup, das KI verwendet, um Lieferketten zu optimieren.“**
+    - **„Übersetze „Hallo, wie geht's?“ ins Französische.“**
+    - **„Erkläre einem 10-jährigen Kind die Quantenverschränkung.“**
+    - **„Gib mir 10 kreative Ideen für eine Sci-Fi-Kurzgeschichte.“**
+
+    Ermitteln Sie jeweils, ob es wahrscheinlich zu einer **kurzen**, **mittellangen** oder **langen/komplexen** Antwort der KI kommt.
+
+1. Überprüfen Sie Ihre Kategorisierungen. Welche Muster bemerken Sie? Berücksichtigen Sie dabei Folgendes:
+
+    - Wirkt sich die **Abstraktionsebene** (z. B. kreativ im Vergleich zu sachlich) auf die Länge aus?
+    - Sind **offene Prompts** in der Regel länger?
+    - Wie wirkt sich die **Komplexität der Anweisung** (z. B. „erkläre, als wenn 10 wäre“) auf die Antwort aus?
+
+1. Geben Sie den folgenden Befehl ein, um die Anwendung **optimize-prompt** auszuführen:
+
+    ```
+   python optimize-prompt.py
+    ```
+
+1. Verwenden Sie einige der oben angegebenen Beispiele, um Ihre Analyse zu überprüfen.
+1. Verwenden Sie nun den folgenden langen Prompt und überprüfen Sie die Ausgabe:
+
+    ```
+   Write a comprehensive overview of the history of artificial intelligence, including key milestones, major contributors, and the evolution of machine learning techniques from the 1950s to today.
+    ```
+
+1. Schreiben Sie diesen Prompt um, um:
+
+    - Den Geltungsbereich zu begrenzen
+    - Erwartungen an Kürze festzulegen
+    - Formatierung oder Struktur zu verwenden, um Antworten zu lenken
+
+1. Vergleichen Sie die Antworten, um zu überprüfen, ob Sie eine präzisere Antwort erhalten haben.
+
+> **HINWEIS:** Sie können `token-count.py` verwenden, um die Tokenverwendung in beiden Antworten vergleichen.
+<br>
+<details>
+<summary><b>Beispiel für einen umgeschriebenen Prompt:</b></summary><br>
+<p>„Erstelle eine Zusammenfassung mit Aufzählungspunkten von 5 wichtigen Meilensteinen der Entwicklung der KI.“</p>
+</details>
+
+## [**OPTIONAL**] Anwenden Ihrer Optimierungen in einem echten Szenario
+
+1. Stellen Sie sich vor, Sie erstellen einen Support-Chatbot, der schnelle und genaue Antworten liefern muss.
+1. Integrieren Sie Ihren optimierte System-Prompt und die Vorlage in den Code des Chatbots (*Sie können `optimize-prompt.py` als Ausgangspunkt verwenden*).
+1. Testen Sie den Chatbot mit verschiedenen Benutzerabfragen, um sicherzustellen, dass er effizient und effektiv antwortet.
+
+## Zusammenfassung
+
+Die Prompt-Optimierung ist eine wichtige Fähigkeit, um Kosten zu senken und die Leistung in Anwendungen mit generativer KI zu verbessern. Indem Sie Prompts verkürzen, Vorlagen verwenden und Benutzerinteraktionen analysieren, können Sie effizientere und skalierbare Lösungen erstellen.
+
+## Bereinigen
+
+Wenn Sie mit der Erkundung von Azure KI Services fertig sind, sollten Sie die in dieser Übung erstellten Ressourcen löschen, um unnötige Azure-Kosten zu vermeiden.
+
+1. Kehren Sie zur Browserregisterkarte mit dem Azure-Portal zurück (oder öffnen Sie das [Azure-Portal](https://portal.azure.com?azure-portal=true) auf einer neuen Browserregisterkarte erneut), und zeigen Sie den Inhalt der Ressourcengruppe an, in der Sie die in dieser Übung verwendeten Ressourcen bereitgestellt haben.
+1. Wählen Sie auf der Symbolleiste die Option **Ressourcengruppe löschen** aus.
+1. Geben Sie den Namen der Ressourcengruppe ein, und bestätigen Sie, dass Sie sie löschen möchten.

@@ -107,9 +107,9 @@ Die Genauigkeit der Benchmark-Metrik wird auf der Grundlage öffentlich verfügb
 
 Zum schnellen Experimentieren und Durchlaufen verwenden Sie eine Reihe von Python-Skripts in Cloud Shell.
 
-1. Wechseln Sie im Azure AI Foundry-Portal zur **Übersichtsseite** Ihres Projekts.
-1. Beachten Sie im Bereich **Projektdetails** die **Projektverbindungszeichenfolge**.
-1. Speichern Sie die Zeichenfolge in einem Editor. Sie verwenden diese Verbindungszeichenfolge, um eine Verbindung mit Ihrem Projekt in einer Clientanwendung herzustellen.
+1. Navigieren Sie auf der Registerkarte „Azure-Portal“ zu der Ressourcengruppe, die zuvor vom Bereitstellungsskript erstellt wurde, und wählen Sie Ihre **Azure AI Foundry**-Ressource aus.
+1. Wählen Sie auf der Seite **Übersicht** für Ihre Ressource **Klicken Sie hier, um Endpunkte anzuzeigen** aus und kopieren Sie den AI Foundry-API-Endpunkt.
+1. Speichern Sie den Endpunkt in einem Editor. Er wird verwendet, um eine Verbindung mit Ihrem Projekt in einer Clientanwendung herzustellen.
 1. Navigieren Sie zurück zur Registerkarte des Azure Portals, öffnen Sie Cloud Shell, wenn Sie den Dienst zuvor geschlossen haben, und führen Sie den folgenden Befehl aus, um zu dem Ordner mit den in dieser Übung verwendeten Codedateien zu navigieren:
 
      ```powershell
@@ -132,7 +132,7 @@ Zum schnellen Experimentieren und Durchlaufen verwenden Sie eine Reihe von Pytho
 
     Die Datei wird in einem Code-Editor geöffnet.
 
-1. Ersetzen Sie in der Codedatei den Platzhalter **your_project_connection_string** durch die Verbindungszeichenfolge für Ihr Projekt (kopiert von der Seite **Übersicht** des Projekts im Azure AI Foundry-Portal). Beachten Sie, dass in der Übung verwendet werden das erste und das zweite Modell verwendet werden: **gpt-4o** bzw. **gpt-4o-mini**.
+1. Ersetzen Sie in der Codedatei den Platzhalter **your_project_endpoint** durch den zuvor kopierten Endpunkt für Ihr Projekt. Beachten Sie, dass in der Übung verwendet werden das erste und das zweite Modell verwendet werden: **gpt-4o** bzw. **gpt-4o-mini**.
 1. *Nachdem* Sie den Platzhalter ersetzt haben, verwenden Sie im Code-Editor den Befehl **STRG+S**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Speichern“**, um Ihre Änderungen zu speichern. Verwenden Sie dann den Befehl **STRG+Q**, oder **klicken Sie mit der rechten Maustaste und klicken dann auf „Beenden“**, um den Code-Editor zu schließen, während die Cloud Shell-Befehlszeile geöffnet bleibt.
 
 ## Senden von Prompts an Ihre bereitgestellten Modelle
@@ -147,7 +147,18 @@ Sie führen nun mehrere Skripts aus, die verschiedene Prompts an Ihre bereitgest
 
 Das Skript codiert das in dieser Übung verwendete Bild in einer Daten-URL. Diese URL wird verwendet, um das Bild direkt in die Chatvervollständigungsanforderung zusammen mit dem ersten Textprompt einzubetten. Als Nächstes gibt das Skript die Antwort des Modells aus, fügt es dem Chatverlauf hinzu und sendet dann einen zweiten Prompt. Der zweite Prompt wird übermittelt und gespeichert, um die später überwachten Metriken aussagekräftiger zu machen. Sie können jedoch die Auskommentierung des optionalen Abschnitts des Codes aufheben, um die zweite Antwort ebenfalls als Ausgabe zu erhalten.
 
-1. Geben Sie im Cloud Shell-Befehlszeilenfenster unterhalb des Code-Editors den folgenden Befehl ein, um das **erste** Skript auszuführen:
+1. Geben Sie im Befehlszeilenbereich der Cloud-Shell den folgenden Befehl ein, um sich bei Azure anzumelden.
+
+    ```
+   az login
+    ```
+
+    **<font color="red">Sie müssen sich bei Azure anmelden - auch wenn die Cloud-Shell-Sitzung bereits authentifiziert ist.</font>**
+
+    > **Hinweis**: In den meisten Szenarien ist nur die Verwendung von *az login* ausreichend. Wenn Sie jedoch Abonnements in mehreren Mandqanten haben, müssen Sie möglicherweise den Mandanten mit dem Parameter *--tenant* angeben. Weitere Informationen finden Sie unter [Interaktive Anmeldung bei Azure mit der Azure CLI](https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively).
+    
+1. Wenn Sie dazu aufgefordert werden, folgen Sie den Anweisungen, um die Anmeldeseite in einer neuen Registerkarte zu öffnen, und geben Sie den angegebenen Authentifizierungscode und Ihre Azure-Anmeldeinformationen ein. Schließen Sie dann den Anmeldevorgang in der Befehlszeile ab, und wählen Sie das Abonnement aus, das Ihren Azure AI Foundry Hub enthält, wenn Sie dazu aufgefordert werden.
+1. Geben Sie nach der Anmeldung den folgenden Befehl ein, um die Anwendung auszuführen:
 
     ```powershell
    python model1.py
@@ -169,7 +180,7 @@ Das Skript codiert das in dieser Übung verwendete Bild in einer Daten-URL. Dies
 
 Schließlich führen Sie ein drittes Skript aus, das die Anzahl der verarbeiteten Token im Laufe der Zeit für jedes Modell darstellt. Diese Daten werden aus Azure Monitor abgerufen.
 
-1. Bevor Sie das letzte Skript ausführen, müssen Sie die Ressourcen-ID für Azure KI Services aus dem Azure-Portal kopieren. Wechseln Sie zur Übersichtsseite Ihrer Azure KI Services-Ressource, und wählen Sie **JSON-Ansicht** aus. Kopieren Sie die Ressourcen-ID, und ersetzen Sie den Platzhalter `your_resource_id` in der Codedatei:
+1. Bevor Sie das letzte Skript ausführen, müssen Sie die Ressourcen-ID für Ihre Azure AI Foundry-Ressource aus dem Azure-Portal kopieren. Wechseln Sie zur Übersichtsseite Ihrer Azure AI Foundry-Ressource, und wählen Sie **JSON-Ansicht** aus. Kopieren Sie die Ressourcen-ID, und ersetzen Sie den Platzhalter `your_resource_id` in der Codedatei:
 
     ```powershell
    code plot.py
