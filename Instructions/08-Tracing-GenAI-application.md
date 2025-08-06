@@ -91,7 +91,7 @@ Beginnen Sie mit dem Abrufen der notwendigen Informationen, um sich für die Int
     ```
    python -m venv labenv
    ./labenv/bin/Activate.ps1
-   pip install python-dotenv openai azure-identity azure-ai-projects azure-ai-inference azure-monitor-opentelemetry
+   pip install python-dotenv openai azure-identity azure-ai-projects opentelemetry-instrumentation-openai-v2 azure-monitor-opentelemetry
     ```
 
 1. Geben Sie den folgenden Befehl ein, um die bereitgestellte Konfigurationsdatei zu öffnen:
