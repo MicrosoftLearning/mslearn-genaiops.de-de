@@ -90,7 +90,7 @@ Beginnen Sie, indem Sie die erforderlichen Informationen abrufen, die für die I
     ```
    python -m venv labenv
    ./labenv/bin/Activate.ps1
-   pip install python-dotenv openai azure-identity azure-ai-projects azure-ai-inference azure-monitor-opentelemetry
+   pip install python-dotenv openai azure-identity azure-ai-projects opentelemetry-instrumentation-openai-v2 azure-monitor-opentelemetry
     ```
 
 1. Geben Sie den folgenden Befehl ein, um die bereitgestellte Konfigurationsdatei zu öffnen:
@@ -184,11 +184,12 @@ Um Daten anzuzeigen, die aus Ihren Modellinteraktionen gesammelt werden, greifen
 ### Navigieren Sie im Azure KI-Foundry-Portal zu Azure Monitor.
 
 1. Navigieren Sie in Ihrem Browser zu der Registerkarte, auf der das **Azure AI Foundry-Portal** geöffnet ist.
-1. Wählen Sie auf der linken Seite das Menü **Ablaufverfolgung** aus.
-1. Wählen Sie oben den Link „**Sehen Sie sich Ihr Dashboard mit Einblicken für generative KI-Anwendungen an**“ aus. Der Link öffnet Azure Monitor auf einer neuen Registerkarte.
-1. Überprüfen Sie die **Übersicht** mit zusammengefassten Daten zu den Interaktionen mit Ihrem bereitgestellten Modell.
+1. Wählen Sie im Menü auf der linken Seite **Überwachung** aus.
+1. Wählen Sie **Ressourcennutzung** aus, und überprüfen Sie die zusammengefassten Daten der Interaktionen mit Ihrem bereitgestellten Modell.
 
-## Interpretieren von Überwachungsmetriken in Azure Monitor
+> **Hinweis:** Sie können auch den **Azure Monitor-Metrik-Explorer** unten auf der Seite „Überwachung“ auswählen, um eine vollständige Ansicht aller verfügbaren Metriken anzuzeigen. Der Link öffnet Azure Monitor auf einer neuen Registerkarte.
+
+## Interpretieren von Überwachungsmetriken
 
 Nun ist es der Moment gekommen, sich mit den Daten auseinanderzusetzen und mit der Interpretation zu beginnen.
 
@@ -196,45 +197,41 @@ Nun ist es der Moment gekommen, sich mit den Daten auseinanderzusetzen und mit d
 
 Konzentrieren Sie sich zuerst auf den Abschnitt **Tokenverwendung** und überprüfen Sie die folgenden Metriken:
 
-- **Prompt-Tokens**: Die Gesamtzahl der Tokens, die in der Eingabe (die von Ihnen gesendeten Prompts) über alle Modellaufrufe hinweg verwendet wurden.
-
-> Betrachten Sie dies als die *Kosten für das Stellen einer Frage* an das Modell.
-
-- **Abschlusstoken**: Die Anzahl der Token, die das Modell als Ausgabe zurückgegeben hat, im Wesentlichen die Länge der Antworten.
-
-> Die generierten Abschlusstoken stellen häufig den Großteil der Tokenverwendung und -kosten dar, insbesondere für lange oder ausführliche Antworten.
-
-- **Gesamttoken**: Die kombinierten Gesamtaufforderungstoken und Abschlusstoken.
-
-> Wichtigste Metrik für Abrechnung und Leistung, da sie Latenz und Kosten steuert.
-
-- **Gesamtaufrufe**: Die Anzahl der separaten Ableitungsanforderungen. Dies ist, wie oft das Modell aufgerufen wurde.
+- **Anforderungen gesamt**: Die Anzahl der separaten Rückschlussanforderungen. Dies ist, wie oft das Modell aufgerufen wurde.
 
 > Nützlich für die Analyse des Durchsatzes und verständnis der durchschnittlichen Kosten pro Anruf.
 
+- **Tokenaufrufe gesamt**: Die kombinierten gesamten Prompttoken und Vervollständigungstoken.
+
+> Wichtigste Metrik für Abrechnung und Leistung, da sie Latenz und Kosten steuert.
+
+- **Anzahl Prompttoken**: Die Gesamtzahl der Token, die in der Eingabe (die von Ihnen gesendeten Prompts) über alle Modellaufrufe hinweg verwendet wurden.
+
+> Betrachten Sie dies als die *Kosten für das Stellen einer Frage* an das Modell.
+
+- **Anzahl Vervollständigungstoken**: Die Anzahl der Token, die das Modell als Ausgabe zurückgegeben hat; im Wesentlichen die Länge der Antworten.
+
+> Die generierten Abschlusstoken stellen häufig den Großteil der Tokenverwendung und -kosten dar, insbesondere für lange oder ausführliche Antworten.
+
 ### Vergleichen der einzelnen Eingabeaufforderungen
 
-Scrollen Sie nach unten, um die **Gen KI Spans** zu finden, die als Tabelle dargestellt wird, in der jede Eingabeaufforderung als neue Datenzeile dargestellt wird. Überprüfen und vergleichen Sie den Inhalt der folgenden Spalten:
-
-- **Status**: Gibt an, ob ein Modellaufruf erfolgreich war oder fehlgeschlagen ist.
-
-> Verwenden Sie diese Option, um problematische Eingabeaufforderungen oder Konfigurationsfehler zu identifizieren. Die letzte Eingabeaufforderung ist wahrscheinlich fehlgeschlagen, weil die Eingabeaufforderung zu lang war.
-
-- **Dauer**: Anzeige in Millisekunden, wie lange es dauerte, bis das Modell reagiert hat.
-
-> Vergleichen Sie zeilenübergreifend, um zu untersuchen, welche Aufforderungsmuster zu längeren Verarbeitungszeiten führen.
+1. Wählen Sie auf der linken Seite das Menü **Ablaufverfolgung** aus. Erweitern Sie die einzelnen **generate_completion**-Spannen für generative KI, um die untergeordneten Spannen anzuzeigen. Jeder Prompt wird als neue Datenzeile dargestellt. Überprüfen und vergleichen Sie den Inhalt der folgenden Spalten:
 
 - **Eingabe**: Zeigt die Benutzernachricht an, die an das Modell gesendet wurde.
 
 > Verwenden Sie diese Spalte, um zu bewerten, welche Promptformulierungen effizient oder problematisch sind.
 
-- **System**: Zeigt die in der Eingabeaufforderung verwendete Systemmeldung an (sofern vorhanden).
-
-> Vergleichen Sie Einträge, um die Auswirkungen der Verwendung oder Änderung von Systemmeldungen zu bewerten.
-
 - **Ausgabe**: Enthält die Antwort des Modells.
 
 > Verwenden Sie sie, um Ausführlichkeit, Relevanz und Konsistenz zu bewerten. Insbesondere im Verhältnis zur Tokenanzahl und Dauer.
+
+- **Dauer**: Anzeige in Millisekunden, wie lange es dauerte, bis das Modell reagiert hat.
+
+> Vergleichen Sie zeilenübergreifend, um zu untersuchen, welche Aufforderungsmuster zu längeren Verarbeitungszeiten führen.
+
+- **Erfolg**: Gibt an, ob ein Modellaufruf erfolgreich war oder fehlgeschlagen ist.
+
+> Verwenden Sie diese Option, um problematische Eingabeaufforderungen oder Konfigurationsfehler zu identifizieren. Die letzte Eingabeaufforderung ist wahrscheinlich fehlgeschlagen, weil die Eingabeaufforderung zu lang war.
 
 ## (OPTIONAL) Erstellen einer Warnung
 
